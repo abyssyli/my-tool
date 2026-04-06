@@ -5,7 +5,6 @@ import Image from "next/image";
 import React, { useMemo } from "react";
 
 import { usePlanner } from "@/app/PlannerProvider";
-import { WeatherPill } from "@/app/components/WeatherPill";
 import { compareISODate, formatDisplayDate, todayISO, timeToMinutes } from "@/lib/dateUtils";
 import type { Task } from "@/lib/plannerTypes";
 
@@ -75,10 +74,7 @@ export function DayContent({ date }: { date: string }) {
               <IconSpark className={styles.icon} />
               <span className={styles.cardTitle}>Overview</span>
             </div>
-            <div style={{ display: "flex", alignItems: "center", gap: 10, flexWrap: "wrap", justifyContent: "flex-end" }}>
-              <WeatherPill date={date} />
-              <div className={dateBadgeClass(date)}>{formatDisplayDate(date)}</div>
-            </div>
+            <div className={dateBadgeClass(date)}>{formatDisplayDate(date)}</div>
           </div>
           <div className={styles.buttonRow}>
             <Link className={styles.buttonSecondary} href={`/new?date=${encodeURIComponent(date)}`}>

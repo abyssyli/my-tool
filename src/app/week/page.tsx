@@ -2,11 +2,10 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import React, { useMemo, useRef } from "react";
+import React, { useMemo, useRef, useState } from "react";
 
 import { PageShell } from "@/app/components/PageShell";
 import { usePlanner } from "@/app/PlannerProvider";
-import { WeatherPill } from "@/app/components/WeatherPill";
 import {
   addDaysISO,
   compareISODate,
@@ -45,6 +44,7 @@ export default function WeekPage() {
     return [today, ...weekDays.slice(0, idx), ...weekDays.slice(idx + 1)];
   }, [weekDays, today]);
   const carouselRef = useRef<HTMLDivElement | null>(null);
+  const [view, setView] = useState<"cards" | "grid">("cards");
 
   function scrollCarousel(direction: -1 | 1) {
     const el = carouselRef.current;
@@ -133,27 +133,53 @@ export default function WeekPage() {
         })()}
 
         <div className={styles.weekControls}>
-          <div className={styles.weekNav}>
+          <div className={styles.segmented} role="tablist" aria-label="Week view">
             <button
-              className={styles.iconButton}
+              className={view === "cards" ? styles.segButtonActive : styles.segButton}
               type="button"
-              onClick={() => scrollCarousel(-1)}
-              aria-label="Scroll left"
+              onClick={() => setView("cards")}
+              role="tab"
+              aria-selected={view === "cards"}
             >
-              <IconChevronLeft className={styles.icon} />
+              Cards
             </button>
             <button
-              className={styles.iconButton}
+              className={view === "grid" ? styles.segButtonActive : styles.segButton}
               type="button"
-              onClick={() => scrollCarousel(1)}
-              aria-label="Scroll right"
+              onClick={() => setView("grid")}
+              role="tab"
+              aria-selected={view === "grid"}
             >
-              <IconChevronRight className={styles.icon} />
+              Grid
             </button>
           </div>
+
+          {view === "cards" ? (
+            <div className={styles.weekNav}>
+              <button
+                className={styles.iconButton}
+                type="button"
+                onClick={() => scrollCarousel(-1)}
+                aria-label="Scroll left"
+              >
+                <IconChevronLeft className={styles.icon} />
+              </button>
+              <button
+                className={styles.iconButton}
+                type="button"
+                onClick={() => scrollCarousel(1)}
+                aria-label="Scroll right"
+              >
+                <IconChevronRight className={styles.icon} />
+              </button>
+            </div>
+          ) : null}
         </div>
 
-        <div className={styles.weekCarousel} ref={carouselRef}>
+        <div
+          className={view === "cards" ? styles.weekCarousel : styles.gridWeek}
+          ref={view === "cards" ? carouselRef : undefined}
+        >
           {days.map((d) => {
             const tasks = state.tasks.filter((t) => t.date === d);
             const notes = state.notes.filter((n) => n.date === d);
@@ -177,7 +203,7 @@ export default function WeekPage() {
             return (
               <Link
                 key={d}
-                className={`${styles.weekDayLink} ${styles.weekDayCard}`}
+                className={`${styles.weekDayLink} ${view === "cards" ? styles.weekDayCard : ""}`}
                 href={`/day/${d}`}
               >
                 <div className={styles.weekDayHeader}>
@@ -189,7 +215,6 @@ export default function WeekPage() {
 
                 <div className={styles.weekPreview}>
                   <div className={styles.weekChips}>
-                    <WeatherPill date={d} />
                     <span className={styles.chip}>
                       <IconCheck className={styles.icon} /> Tasks {tasks.length}
                     </span>
