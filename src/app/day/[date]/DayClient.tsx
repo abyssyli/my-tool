@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import React, { useMemo, useState } from "react";
 
 import { DayContent } from "@/app/components/DayContent";
+import { DatePicker } from "@/app/components/DatePicker";
 import { IconCalendar, IconChevronLeft, IconChevronRight, IconSpark } from "@/app/components/Icons";
 import { PageShell } from "@/app/components/PageShell";
 import styles from "@/app/components/planner.module.css";
@@ -66,16 +67,12 @@ export function DayClient({ date }: { date: string }) {
           <Link className={styles.buttonSecondary} href="/">
             Today
           </Link>
-          <input
-            className={styles.input}
-            type="date"
-            value={jumpDate}
-            onChange={(e) => setJumpDate(e.target.value)}
-          />
+          <DatePicker value={jumpDate} onChange={setJumpDate} allowClear preferPlacement="top" />
           <button
             className={styles.button}
             type="button"
             onClick={() => router.push(`/day/${jumpDate}`)}
+            disabled={!isISODateString(jumpDate)}
           >
             Go
           </button>

@@ -3,6 +3,7 @@
 import { useRouter } from "next/navigation";
 import React, { useMemo, useState } from "react";
 
+import { DatePicker } from "@/app/components/DatePicker";
 import { PageShell } from "@/app/components/PageShell";
 import { usePlanner } from "@/app/PlannerProvider";
 import { isISODateString, todayISO } from "@/lib/dateUtils";
@@ -110,7 +111,7 @@ export default function TemplatesPage() {
           <div className={styles.muted}>Adds items to client-side state</div>
         </div>
         <div className={styles.buttonRow}>
-          <input className={styles.input} type="date" value={date} onChange={(e) => setDate(e.target.value)} />
+          <DatePicker value={date} onChange={setDate} />
           {error ? <span className={styles.empty}>{error}</span> : null}
         </div>
       </section>

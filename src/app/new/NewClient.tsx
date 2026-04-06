@@ -4,6 +4,7 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import React, { useMemo, useRef, useState } from "react";
 
+import { DatePicker } from "@/app/components/DatePicker";
 import { PageShell } from "@/app/components/PageShell";
 import { usePlanner } from "@/app/PlannerProvider";
 import { isISODateString, timeToMinutes, todayISO } from "@/lib/dateUtils";
@@ -124,12 +125,7 @@ export function NewClient({ presetDate }: { presetDate?: string }) {
         <div className={styles.formGrid}>
           <label className={styles.field}>
             <span className={styles.muted}>Date</span>
-            <input
-              className={styles.input}
-              type="date"
-              value={date}
-              onChange={(e) => setDate(e.target.value)}
-            />
+            <DatePicker value={date} onChange={setDate} />
           </label>
 
           <div className={styles.field}>
