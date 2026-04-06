@@ -1,7 +1,6 @@
 "use client";
 
 import Link from "next/link";
-import Image from "next/image";
 import React, { useMemo, useRef } from "react";
 
 import { PageShell } from "@/app/components/PageShell";
@@ -61,6 +60,75 @@ export default function WeekPage() {
           </div>
           <div className={styles.muted}>Swipe cards to browse the week</div>
         </div>
+
+        {(() => {
+          const tasksInWeek = state.tasks.filter((t) => weekDays.includes(t.date));
+          const totalTasks = tasksInWeek.length;
+          const doneTasks = tasksInWeek.reduce((acc, t) => acc + (t.completed ? 1 : 0), 0);
+          const completionPct = totalTasks === 0 ? 0 : Math.round((doneTasks / totalTasks) * 100);
+
+          const workTasks = tasksInWeek.filter((t) => (t.category ?? "work") === "work");
+          const lifeTasks = tasksInWeek.filter((t) => (t.category ?? "work") === "life");
+
+          const busiest = weekDays.reduce(
+            (best, d) => {
+              const count = tasksInWeek.reduce((acc, t) => acc + (t.date === d ? 1 : 0), 0);
+              if (count > best.count) return { date: d, count };
+              return best;
+            },
+            { date: weekDays[0], count: tasksInWeek.reduce((acc, t) => acc + (t.date === weekDays[0] ? 1 : 0), 0) },
+          );
+
+          const pHigh = tasksInWeek.reduce((acc, t) => acc + (t.priority === "high" ? 1 : 0), 0);
+          const pMed = tasksInWeek.reduce((acc, t) => acc + (t.priority === "medium" ? 1 : 0), 0);
+          const pLow = tasksInWeek.reduce((acc, t) => acc + (t.priority === "low" ? 1 : 0), 0);
+
+          const perDay = weekDays.map((d) => {
+            const dayTasks = tasksInWeek.filter((t) => t.date === d);
+            const total = dayTasks.length;
+            const done = dayTasks.reduce((acc, t) => acc + (t.completed ? 1 : 0), 0);
+            const pct = total === 0 ? 0 : Math.round((done / total) * 100);
+            return { date: d, total, pct };
+          });
+
+          return (
+            <>
+              <div className={styles.statsGrid}>
+                <div className={styles.statCard}>
+                  <div className={styles.statLabel}>Total tasks</div>
+                  <div className={styles.statValue}>{totalTasks}</div>
+                  <div className={styles.statSub}>{`Work ${workTasks.length} · Life ${lifeTasks.length}`}</div>
+                </div>
+                <div className={styles.statCard}>
+                  <div className={styles.statLabel}>Weekly completion</div>
+                  <div className={styles.statValue}>{`${completionPct}%`}</div>
+                  <div className={styles.statSub}>{totalTasks === 0 ? "—" : `${doneTasks}/${totalTasks} done`}</div>
+                </div>
+                <div className={styles.statCard}>
+                  <div className={styles.statLabel}>Busiest day</div>
+                  <div className={styles.statValue}>{busiest.count}</div>
+                  <div className={styles.statSub}>{formatDisplayDate(busiest.date)}</div>
+                </div>
+                <div className={styles.statCard}>
+                  <div className={styles.statLabel}>Priority</div>
+                  <div className={styles.statValue}>{pHigh}</div>
+                  <div className={styles.statSub}>{`High ${pHigh} · Medium ${pMed} · Low ${pLow}`}</div>
+                </div>
+              </div>
+
+              <div className={styles.statCard}>
+                <div className={styles.statLabel}>Daily completion trend</div>
+                <div className={styles.sparkBars} aria-hidden="true">
+                  {perDay.map((d) => (
+                    <div key={d.date} className={styles.sparkBar} title={`${formatDisplayDate(d.date)} · ${d.pct}%`}>
+                      <div className={styles.sparkFill} style={{ height: `${Math.max(6, d.pct)}%` }} />
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </>
+          );
+        })()}
 
         <div className={styles.weekControls}>
           <div className={styles.weekNav}>
@@ -181,18 +249,6 @@ export default function WeekPage() {
                         <div className={styles.weekTaskLines}>
                           {previewTasks.map((t) => (
                             <div key={t.id} className={styles.weekTaskLine}>
-                              {t.imageDataUrl ? (
-                                <span className={styles.thumb} aria-hidden="true">
-                                  <Image
-                                    className={styles.thumbImg}
-                                    src={t.imageDataUrl}
-                                    alt=""
-                                    width={36}
-                                    height={36}
-                                    unoptimized
-                                  />
-                                </span>
-                              ) : null}
                               <div className={styles.truncate}>{t.title}</div>
                             </div>
                           ))}

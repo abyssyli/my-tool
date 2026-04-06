@@ -1,7 +1,6 @@
 "use client";
 
 import Link from "next/link";
-import Image from "next/image";
 import React, { useMemo } from "react";
 
 import { usePlanner } from "@/app/PlannerProvider";
@@ -119,18 +118,6 @@ export function DayContent({ date }: { date: string }) {
                   />
                   <div className={styles.taskTitle}>
                     <div className={styles.taskTitleRow}>
-                      {t.imageDataUrl ? (
-                        <span className={styles.thumb} aria-hidden="true">
-                          <Image
-                            className={styles.thumbImg}
-                            src={t.imageDataUrl}
-                            alt=""
-                            width={36}
-                            height={36}
-                            unoptimized
-                          />
-                        </span>
-                      ) : null}
                       <div className={`${styles.truncate} ${t.completed ? styles.taskDone : ""}`}>{t.title}</div>
                     </div>
                     <div className={styles.muted}>

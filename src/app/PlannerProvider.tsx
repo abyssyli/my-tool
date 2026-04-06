@@ -42,21 +42,6 @@ function createInitialState(): PlannerState {
   const inTwoDays = addDaysISO(today, 2);
   const inThreeDays = addDaysISO(today, 3);
 
-  function svgThumb(a: string, b: string): string {
-    const svg =
-      `<svg xmlns="http://www.w3.org/2000/svg" width="96" height="96">` +
-      `<defs><linearGradient id="g" x1="0" x2="1" y1="0" y2="1">` +
-      `<stop stop-color="${a}"/><stop offset="1" stop-color="${b}"/></linearGradient></defs>` +
-      `<rect width="96" height="96" rx="24" fill="url(#g)"/>` +
-      `<path d="M30 50h36" stroke="rgba(255,255,255,0.9)" stroke-width="8" stroke-linecap="round"/>` +
-      `</svg>`;
-    return `data:image/svg+xml;utf8,${encodeURIComponent(svg)}`;
-  }
-
-  const imgWork = svgThumb("#2F7BFF", "#6B5CFF");
-  const imgLife = svgThumb("#32D74B", "#FFCC00");
-  const imgPink = svgThumb("#FF2D55", "#6B5CFF");
-
   return {
     tasks: [
       {
@@ -66,7 +51,6 @@ function createInitialState(): PlannerState {
         completed: false,
         priority: "high",
         category: "work",
-        imageDataUrl: imgWork,
       },
       {
         id: "seed-task-2",
@@ -83,7 +67,6 @@ function createInitialState(): PlannerState {
         completed: false,
         priority: "medium",
         category: "life",
-        imageDataUrl: imgLife,
       },
       {
         id: "seed-task-4",
@@ -108,7 +91,6 @@ function createInitialState(): PlannerState {
         completed: false,
         priority: "high",
         category: "work",
-        imageDataUrl: imgPink,
       },
       {
         id: "seed-task-7",
@@ -117,7 +99,6 @@ function createInitialState(): PlannerState {
         completed: false,
         priority: "medium",
         category: "life",
-        imageDataUrl: imgLife,
       },
       {
         id: "seed-task-8",
@@ -126,7 +107,6 @@ function createInitialState(): PlannerState {
         completed: false,
         priority: "medium",
         category: "work",
-        imageDataUrl: imgWork,
       },
     ],
     notes: [

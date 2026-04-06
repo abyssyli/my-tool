@@ -5,7 +5,6 @@ export type Task = {
   completed: boolean;
   priority?: "low" | "medium" | "high";
   category?: "work" | "life";
-  imageDataUrl?: string;
 };
 
 export type Note = {
