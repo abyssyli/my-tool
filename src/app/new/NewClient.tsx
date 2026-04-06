@@ -1,7 +1,8 @@
 "use client";
 
+import Image from "next/image";
 import { useRouter } from "next/navigation";
-import React, { useMemo, useState } from "react";
+import React, { useMemo, useRef, useState } from "react";
 
 import { PageShell } from "@/app/components/PageShell";
 import { usePlanner } from "@/app/PlannerProvider";
@@ -24,6 +25,9 @@ type TaskCategory = NonNullable<Task["category"]>;
 export function NewClient({ presetDate }: { presetDate?: string }) {
   const router = useRouter();
   const { actions } = usePlanner();
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
+  const [fileKey, setFileKey] = useState(0);
+  const [fileName, setFileName] = useState<string | null>(null);
 
   const today = useMemo(() => todayISO(), []);
   const initialDate = presetDate && isISODateString(presetDate) ? presetDate : today;
@@ -33,6 +37,7 @@ export function NewClient({ presetDate }: { presetDate?: string }) {
   const [title, setTitle] = useState("");
   const [priority, setPriority] = useState<Task["priority"] | "">("");
   const [category, setCategory] = useState<TaskCategory>("work");
+  const [imageDataUrl, setImageDataUrl] = useState<string | null>(null);
   const [content, setContent] = useState("");
   const [start, setStart] = useState("09:00");
   const [end, setEnd] = useState("10:00");
@@ -61,6 +66,7 @@ export function NewClient({ presetDate }: { presetDate?: string }) {
         title: title.trim(),
         priority: priority === "" ? undefined : priority,
         category,
+        imageDataUrl: imageDataUrl ?? undefined,
       });
       goBack(date);
       return;
@@ -199,6 +205,72 @@ export function NewClient({ presetDate }: { presetDate?: string }) {
                 >
                   <IconHeart className={styles.icon} /> Life
                 </button>
+              </div>
+            </div>
+
+            <div className={`${styles.field} ${styles.fullWidth}`}>
+              <span className={styles.muted}>Image</span>
+              <div className={styles.fileRow}>
+                <input
+                  key={fileKey}
+                  ref={fileInputRef}
+                  className={styles.fileInputHidden}
+                  type="file"
+                  accept="image/*"
+                  onChange={(e) => {
+                    const file = e.currentTarget.files?.[0] ?? null;
+                    if (!file) {
+                      setImageDataUrl(null);
+                      setFileName(null);
+                      return;
+                    }
+                    setFileName(file.name);
+                    const reader = new FileReader();
+                    reader.onload = () => {
+                      const result = typeof reader.result === "string" ? reader.result : null;
+                      setImageDataUrl(result);
+                    };
+                    reader.readAsDataURL(file);
+                  }}
+                />
+
+                <button
+                  className={styles.fileButton}
+                  type="button"
+                  onClick={() => fileInputRef.current?.click()}
+                >
+                  Choose image…
+                </button>
+
+                <span className={styles.fileName}>{fileName ?? "No file selected"}</span>
+                {imageDataUrl ? (
+                  <>
+                    <Image
+                      src={imageDataUrl}
+                      alt="Task image"
+                      width={54}
+                      height={54}
+                      unoptimized
+                      style={{
+                        borderRadius: 16,
+                        objectFit: "cover",
+                        border: "1px solid rgba(0,0,0,0.12)",
+                        boxShadow: "0 12px 22px rgba(0,0,0,0.08)",
+                      }}
+                    />
+                    <button
+                      className={styles.buttonSecondary}
+                      type="button"
+                      onClick={() => {
+                        setImageDataUrl(null);
+                        setFileName(null);
+                        setFileKey((k) => k + 1);
+                      }}
+                    >
+                      Remove
+                    </button>
+                  </>
+                ) : null}
               </div>
             </div>
           </div>

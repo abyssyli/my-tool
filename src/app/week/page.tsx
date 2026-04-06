@@ -1,10 +1,12 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import React, { useMemo, useRef } from "react";
 
 import { PageShell } from "@/app/components/PageShell";
 import { usePlanner } from "@/app/PlannerProvider";
+import { WeatherPill } from "@/app/components/WeatherPill";
 import {
   addDaysISO,
   compareISODate,
@@ -187,6 +189,7 @@ export default function WeekPage() {
 
                 <div className={styles.weekPreview}>
                   <div className={styles.weekChips}>
+                    <WeatherPill date={d} />
                     <span className={styles.chip}>
                       <IconCheck className={styles.icon} /> Tasks {tasks.length}
                     </span>
@@ -249,6 +252,18 @@ export default function WeekPage() {
                         <div className={styles.weekTaskLines}>
                           {previewTasks.map((t) => (
                             <div key={t.id} className={styles.weekTaskLine}>
+                              {t.imageDataUrl ? (
+                                <span className={styles.thumb} aria-hidden="true">
+                                  <Image
+                                    className={styles.thumbImg}
+                                    src={t.imageDataUrl}
+                                    alt=""
+                                    width={36}
+                                    height={36}
+                                    unoptimized
+                                  />
+                                </span>
+                              ) : null}
                               <div className={styles.truncate}>{t.title}</div>
                             </div>
                           ))}
