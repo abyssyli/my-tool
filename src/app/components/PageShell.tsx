@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import React from "react";
 
+import { IconApp, IconHome, IconNote, IconPlus, IconWeek } from "./Icons";
 import styles from "./planner.module.css";
 
 export function PageShell({
@@ -40,6 +41,9 @@ export function PageShell({
             <IconPlus className={styles.icon} />
             New
           </Link>
+          <Link className={pathname === "/templates" ? styles.navActive : styles.navLink} href="/templates">
+            <IconNote className={styles.icon} />
+            Templates
           </Link>
         </nav>
       </header>
